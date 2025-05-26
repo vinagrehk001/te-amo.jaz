@@ -2,99 +2,103 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Te Amo Jaz</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: black;
+      background-color: black;
       overflow: hidden;
       height: 100%;
       width: 100%;
-      cursor: pointer;
+      position: relative;
+      font-family: sans-serif;
     }
 
     canvas {
       position: absolute;
       top: 0;
       left: 0;
+      z-index: 0;
     }
 
-    .love-message {
+    .mensaje {
       position: absolute;
       color: hotpink;
       font-size: 24px;
       font-weight: bold;
+      animation: fadeOut 2s forwards;
       pointer-events: none;
-      opacity: 1;
-      animation: fadeOut 2s ease-out forwards;
     }
 
     @keyframes fadeOut {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-30px); }
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.5); }
     }
   </style>
 </head>
 <body>
+  <canvas id="matrix"></canvas>
 
-<canvas id="matrix"></canvas>
+  <iframe
+    id="youtube-player"
+    width="0"
+    height="0"
+    src="https://www.youtube.com/embed/WsvYPRqSH28?start=50&autoplay=1&mute=1&controls=0"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen
+    style="position: fixed; bottom: 10px; right: 10px; opacity: 0.7; pointer-events: none;">
+  </iframe>
 
-<script>
-  const canvas = document.getElementById("matrix");
-  const ctx = canvas.getContext("2d");
+  <script>
+    // Matrix estilo
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
 
-  // Ajustar tamaño del canvas
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
-
-  const letters = Array(100).fill("Te Amo Jaz");
-  const fontSize = 16;
-  const columns = canvas.width / fontSize;
-  const drops = Array(Math.floor(columns)).fill(1);
-
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#cc66ff"; // violeta
-    ctx.font = fontSize + "px monospace";
-
-    for (let i = 0; i < drops.length; i++) {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-
-      drops[i]++;
-    }
-  }
-
-  setInterval(drawMatrix, 50);
-
-  // Click para mostrar "Te Amo Mucho"
-  document.addEventListener("click", function (e) {
-    const msg = document.createElement("div");
-    msg.className = "love-message";
-    msg.style.left = e.pageX + "px";
-    msg.style.top = e.pageY + "px";
-    msg.textContent = "Te Amo Mucho";
-    document.body.appendChild(msg);
-
-    setTimeout(() => {
-      msg.remove();
-    }, 2000); // desaparece luego de 2 segundos
-  });
-
-  // Redimensionar canvas si cambia tamaño
-  window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-  });
-</script>
+    canvas.width = window.innerWidth;
 
+    const letters = Array(256).join("1").split("");
+    const fontSize = 14;
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#AA00FF"; // violeta
+      ctx.font = fontSize + "px monospace";
+
+      letters.forEach((y, index) => {
+        const text = "Te Amo Jaz";
+        const x = index * fontSize;
+        ctx.fillText(text, x, y);
+        letters[index] = y > 758 + Math.random() * 10000 ? 0 : y + fontSize;
+      });
+    }
+
+    setInterval(drawMatrix, 60);
+
+    // Mostrar "Te Amo Mucho" al hacer clic
+    document.addEventListener("click", function(e) {
+      const msg = document.createElement("div");
+      msg.className = "mensaje";
+      msg.innerText = "Te Amo Mucho 💖";
+      msg.style.left = `${e.clientX}px`;
+      msg.style.top = `${e.clientY}px`;
+
+      document.body.appendChild(msg);
+
+      setTimeout(() => {
+        msg.remove();
+      }, 2000);
+    });
+
+    // Redimensionar canvas si cambia el tamaño
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>

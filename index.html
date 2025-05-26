@@ -43,7 +43,7 @@
       top: 0;
       left: 0;
       z-index: 0;
-      display: none;
+      display: none; /* oculto inicialmente */
     }
 
     .mensaje {
@@ -72,8 +72,8 @@
     const canvas = document.getElementById("matrix");
     const ctx = canvas.getContext("2d");
     const fontSize = 14;
-    let letters;
-    let audio;
+    let letters = [];
+    let intervalId;
 
     function setupMatrix() {
       canvas.width = window.innerWidth;
@@ -96,7 +96,7 @@
         });
       }
 
-      setInterval(drawMatrix, 60);
+      intervalId = setInterval(drawMatrix, 60);
 
       // Mostrar "Te Amo Mucho" al hacer clic
       document.addEventListener("click", function(e) {
@@ -123,15 +123,10 @@
       // Ocultar el botón
       startButton.style.display = "none";
 
-      // Preparar y mostrar matrix
+      // Iniciar matrix
       setupMatrix();
 
-      // Crear audio y reproducir desde el segundo 50
-      audio = new Audio("https://www.youtube.com/watch?v=WsvYPRqSH28");
-      // Nota: No se puede reproducir directamente audio de YouTube por CORS y política.
-      // Por eso, en vez de eso, vamos a usar un iframe embebido para que suene.
-
-      // Crear iframe embebido para YouTube con autoplay y start=50
+      // Insertar iframe con la canción empezando desde el segundo 50 y autoplay
       const iframe = document.createElement("iframe");
       iframe.src = "https://www.youtube.com/embed/WsvYPRqSH28?start=50&autoplay=1&controls=1&rel=0";
       iframe.style.position = "fixed";
@@ -143,7 +138,6 @@
       iframe.allow = "autoplay";
       document.body.appendChild(iframe);
     });
-
   </script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Te Amo Jaz</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      cursor: pointer;
+    }
+    canvas {
+      display: block;
+    }
+    #mensaje {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: pink;
+      font-size: 3em;
+      font-family: 'Courier New', Courier, monospace;
+      display: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div id="mensaje">Te Amo Mucho</div>
+  <canvas id="matrix"></canvas>
+
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    // Ajustar el tamaño del canvas
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const mensaje = 'Te Amo Jaz';
+    const fontSize = 18;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) {
+      drops[x] = Math.random() * canvas.height;
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#AA00FF'; // Violeta
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        ctx.fillText(mensaje, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 60);
+
+    document.body.addEventListener('click', () => {
+      const msg = document.getElementById('mensaje');
+      msg.style.display = 'block';
+    });
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>

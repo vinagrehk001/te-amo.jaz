@@ -8,12 +8,34 @@
     html, body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      overflow: hidden;
       height: 100%;
       width: 100%;
-      position: relative;
       font-family: sans-serif;
+      background-color: black;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #start-button {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #4B0082; /* violeta oscuro */
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      font-size: 28px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      z-index: 1000;
+    }
+
+    #start-button:hover {
+      background-color: #5D3FD3;
     }
 
     canvas {
@@ -21,6 +43,7 @@
       top: 0;
       left: 0;
       z-index: 0;
+      display: none;
     }
 
     .mensaje {
@@ -30,6 +53,7 @@
       font-weight: bold;
       animation: fadeOut 2s forwards;
       pointer-events: none;
+      user-select: none;
     }
 
     @keyframes fadeOut {
@@ -39,66 +63,87 @@
   </style>
 </head>
 <body>
+
+  <button id="start-button">toca aca❤️</button>
   <canvas id="matrix"></canvas>
 
-  <iframe
-    id="youtube-player"
-    width="0"
-    height="0"
-    src="https://www.youtube.com/embed/WsvYPRqSH28?start=50&autoplay=1&mute=1&controls=0"
-    frameborder="0"
-    allow="autoplay"
-    allowfullscreen
-    style="position: fixed; bottom: 10px; right: 10px; opacity: 0.7; pointer-events: none;">
-  </iframe>
-
   <script>
-    // Matrix estilo
+    const startButton = document.getElementById("start-button");
     const canvas = document.getElementById("matrix");
     const ctx = canvas.getContext("2d");
-
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-
-    const letters = Array(256).join("1").split("");
     const fontSize = 14;
+    let letters;
+    let audio;
 
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#AA00FF"; // violeta
-      ctx.font = fontSize + "px monospace";
+    function setupMatrix() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = "block";
 
-      letters.forEach((y, index) => {
-        const text = "Te Amo Jaz";
-        const x = index * fontSize;
-        ctx.fillText(text, x, y);
-        letters[index] = y > 758 + Math.random() * 10000 ? 0 : y + fontSize;
+      letters = Array(Math.floor(canvas.width / fontSize)).fill(0);
+
+      function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#AA00FF"; // violeta
+        ctx.font = fontSize + "px monospace";
+
+        letters.forEach((y, index) => {
+          const text = "Te Amo Jaz";
+          const x = index * fontSize;
+          ctx.fillText(text, x, y);
+          letters[index] = y > canvas.height + Math.random() * 10000 ? 0 : y + fontSize;
+        });
+      }
+
+      setInterval(drawMatrix, 60);
+
+      // Mostrar "Te Amo Mucho" al hacer clic
+      document.addEventListener("click", function(e) {
+        const msg = document.createElement("div");
+        msg.className = "mensaje";
+        msg.innerText = "Te Amo Mucho 💖";
+        msg.style.left = `${e.clientX}px`;
+        msg.style.top = `${e.clientY}px`;
+
+        document.body.appendChild(msg);
+
+        setTimeout(() => {
+          msg.remove();
+        }, 2000);
+      });
+
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
       });
     }
 
-    setInterval(drawMatrix, 60);
+    startButton.addEventListener("click", () => {
+      // Ocultar el botón
+      startButton.style.display = "none";
 
-    // Mostrar "Te Amo Mucho" al hacer clic
-    document.addEventListener("click", function(e) {
-      const msg = document.createElement("div");
-      msg.className = "mensaje";
-      msg.innerText = "Te Amo Mucho 💖";
-      msg.style.left = `${e.clientX}px`;
-      msg.style.top = `${e.clientY}px`;
+      // Preparar y mostrar matrix
+      setupMatrix();
 
-      document.body.appendChild(msg);
+      // Crear audio y reproducir desde el segundo 50
+      audio = new Audio("https://www.youtube.com/watch?v=WsvYPRqSH28");
+      // Nota: No se puede reproducir directamente audio de YouTube por CORS y política.
+      // Por eso, en vez de eso, vamos a usar un iframe embebido para que suene.
 
-      setTimeout(() => {
-        msg.remove();
-      }, 2000);
+      // Crear iframe embebido para YouTube con autoplay y start=50
+      const iframe = document.createElement("iframe");
+      iframe.src = "https://www.youtube.com/embed/WsvYPRqSH28?start=50&autoplay=1&controls=1&rel=0";
+      iframe.style.position = "fixed";
+      iframe.style.bottom = "10px";
+      iframe.style.right = "10px";
+      iframe.style.width = "300px";
+      iframe.style.height = "170px";
+      iframe.style.border = "none";
+      iframe.allow = "autoplay";
+      document.body.appendChild(iframe);
     });
 
-    // Redimensionar canvas si cambia el tamaño
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
   </script>
 </body>
 </html>
